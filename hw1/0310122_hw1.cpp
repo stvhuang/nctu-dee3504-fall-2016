@@ -38,6 +38,9 @@ int main (int __attribute__((unused)) argc, char ** argv) {
     }
     const int arr_size(arr.size());
 
+    // Execution time test: start
+    //clock_t start(clock());
+
     if (argv[1] == static_cast<string>("1")) {        // insertion sort
         insertionSort(arr, 0, arr_size - 1);
     } else if (argv[1] == static_cast<string>("2")) { // merge sort
@@ -46,9 +49,12 @@ int main (int __attribute__((unused)) argc, char ** argv) {
         heapSort(arr, arr_size);
     } else if (argv[1] == static_cast<string>("4")) { // quick sort
         quickSort(arr, 0, arr_size - 1);
-    } /*else if (argv[1] == static_cast<string>("5")) { // my sort
+    }/* else if (argv[1] == static_cast<string>("5")) { // my sort
         mySort(arr, 0, arr_size - 1);
     }*/
+
+    // Execution time test: end
+    //clock_t end(clock()); cout << "\033[1;33m" << argv[1] << " Exec time: " << "\033[1;31m" << static_cast<double>(end - start) / 1000 << "\033[0m\n";
 
     // write the output data to outputfile
     outFile << arr[0];
@@ -173,7 +179,14 @@ void heapSort(vector<int>& arr, int n) {
 }
 
 void quickSort(vector<int>& arr, int low, int high) {
-    int i(low), j(high), pivot(arr[(i + j) / 2]);
+    // always choose the last element in arr as pivot
+    //int i(low), j(high), pivot(arr[(low + high) / 2]);
+
+    // randomly choose the pivot
+    int random_num(low + rand() % (high - low + 1));
+    swap(arr[random_num], arr[(low + high) / 2]);
+
+    int i(low), j(high), pivot(arr[(low + high) / 2]);
 
     // devide
     while (i <= j) {
@@ -208,28 +221,42 @@ void quickSort(vector<int>& arr, int low, int high) {
 /*
 void mySort(vector<int>& arr, int low, int high) {
     // if less than 25 elements in arr, use insertion sort instead of quick sort
-    if ((high - low) < 8) {
+    if ((high - low) < 300) {
         insertionSort(arr, low, high);
         return;
     }
 
     // randomly choose the pivot
     int random_num(low + rand() % (high - low + 1));
-    swap(arr[random_num], arr[high]);
-    int i(low - 1), pivot(arr[high]);
+    swap(arr[random_num], arr[(low + high) / 2]);
+
+    int i(low), j(high), pivot(arr[(low + high) / 2]);
 
     // devide
-    for (int j(low); j < high; ++j) {
-        if (arr[j] < pivot) {
+    while (i <= j) {
+        while (arr[i] < pivot) {
             ++i;
+        }
+
+        while (arr[j] > pivot) {
+            --j;
+        }
+
+        if (i <= j) {
             swap(arr[i], arr[j]);
+            ++i;
+            --j;
         }
     }
-    swap(arr[i + 1], arr[high]); // now arr[i + 1] is the pivot
 
     // conquer
-    mySort(arr, low, i);
-    mySort(arr, i + 2, high);
+    if (j > low) {
+        mySort(arr, low, j);
+    }
+
+    if (i < high) {
+        mySort(arr, i, high);
+    }
 
     // no need to combine
 
