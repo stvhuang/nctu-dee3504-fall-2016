@@ -6,8 +6,6 @@
 
 //#include <iostream>
 //#include <ctime>
-//#include <utility>
-//#include <algorithm>
 #include <string>
 #include <fstream>
 #include <vector>
@@ -20,26 +18,34 @@ void mergeSort(vector<int>& arr, int low, int high);
 void heapify(vector<int>& arr, int n, int i);
 void heapSort(vector<int>& arr, int n);
 void quickSort(vector<int>& arr, int low, int high);
-//void mySort(vector<int>& arr, int low, int high);
 
 int main (int __attribute__((unused)) argc, char ** argv) {
 
-    // declare file I/O
+    // Execution time test: start
+    //clock_t start(clock());
+
+    // declare file I/O stream
     ifstream inFile(argv[2]);
     ofstream outFile(argv[3]);
 
-    // read the input data from inputfile
-    if (!inFile.good()) { // check the input file is open successfully
-        return 0;
+    // check the input file is open successfully
+    if (!inFile.is_open()) {
+        exit(1);
     }
-    vector<int> arr; // use vector<int> to store data
-    for (int temp; inFile >> temp;) {
+
+    // use vector<int> to store input data
+    vector<int> arr;
+
+    // read the data from input file into arr
+    int temp(0);
+    while (inFile >> temp) {
         arr.push_back(temp);
     }
+
+    // get the vector's size
     const int arr_size(arr.size());
 
-    // Execution time test: start
-    //clock_t start(clock());
+    srand(time(NULL));
 
     if (argv[1] == static_cast<string>("1")) {        // insertion sort
         insertionSort(arr, 0, arr_size - 1);
@@ -49,21 +55,20 @@ int main (int __attribute__((unused)) argc, char ** argv) {
         heapSort(arr, arr_size);
     } else if (argv[1] == static_cast<string>("4")) { // quick sort
         quickSort(arr, 0, arr_size - 1);
-    }/* else if (argv[1] == static_cast<string>("5")) { // my sort
-        mySort(arr, 0, arr_size - 1);
-    }*/
+    }
 
-    // Execution time test: end
-    //clock_t end(clock()); cout << "\033[1;33m" << argv[1] << " Exec time: " << "\033[1;31m" << static_cast<double>(end - start) / 1000 << "\033[0m\n";
-
-    // write the output data to outputfile
+    // write the data in arr into output file
     outFile << arr[0];
     for (int i(1); i < arr_size; ++i) {
         outFile << " " << arr[i];
     }
 
+    // close the input and output file stream
     inFile.close();
     outFile.close();
+
+    // Execution time test: end
+    //clock_t end(clock()); cout << "\033[1;33m" << argv[1] << " Exec time: " << "\033[1;31m" << static_cast<double>(end - start) << "\033[0m\n";
 
     return 0;
 }
@@ -126,7 +131,7 @@ void merge(vector<int>& arr, int low, int pivot, int high) {
 
 void mergeSort(vector<int>& arr, int low, int high) {
     if (high > low) {
-        // devide
+        // divide
         int pivot((low + high) / 2); // choose pivot
 
         // conquer
@@ -182,13 +187,15 @@ void quickSort(vector<int>& arr, int low, int high) {
     // always choose the last element in arr as pivot
     //int i(low), j(high), pivot(arr[(low + high) / 2]);
 
-    // randomly choose the pivot
-    int random_num(low + rand() % (high - low + 1));
-    swap(arr[random_num], arr[(low + high) / 2]);
+    // randomly choose the pivot if the size of arr > 50
+    if ((high - low) > 50) {
+        int random_num(low + rand() % (high - low + 1));
+        swap(arr[random_num], arr[(low + high) / 2]);
+    }
 
     int i(low), j(high), pivot(arr[(low + high) / 2]);
 
-    // devide
+    // divide
     while (i <= j) {
         while (arr[i] < pivot) {
             ++i;
@@ -218,47 +225,3 @@ void quickSort(vector<int>& arr, int low, int high) {
 
     return;
 }
-/*
-void mySort(vector<int>& arr, int low, int high) {
-    // if less than 25 elements in arr, use insertion sort instead of quick sort
-    if ((high - low) < 300) {
-        insertionSort(arr, low, high);
-        return;
-    }
-
-    // randomly choose the pivot
-    int random_num(low + rand() % (high - low + 1));
-    swap(arr[random_num], arr[(low + high) / 2]);
-
-    int i(low), j(high), pivot(arr[(low + high) / 2]);
-
-    // devide
-    while (i <= j) {
-        while (arr[i] < pivot) {
-            ++i;
-        }
-
-        while (arr[j] > pivot) {
-            --j;
-        }
-
-        if (i <= j) {
-            swap(arr[i], arr[j]);
-            ++i;
-            --j;
-        }
-    }
-
-    // conquer
-    if (j > low) {
-        mySort(arr, low, j);
-    }
-
-    if (i < high) {
-        mySort(arr, i, high);
-    }
-
-    // no need to combine
-
-    return;
-}*/
