@@ -90,15 +90,21 @@ int main(int argc, char** argv)
 
     for (int i(0); i < CASE_MAX; ++i) // find max_iphone & max_stair
     {
-        if (testCase[i][0] > max_iphone)
+        if (static_cast<long long int>(log2(testCase[i][1])) < testCase[i][0])
         {
-            max_iphone = testCase[i][0];
+            continue;
         }
-        if (testCase[i][1] > max_stair)
+        else
         {
-            max_stair = testCase[i][1];
+            if (testCase[i][0] > max_iphone)
+                max_iphone = testCase[i][0];
+            if (testCase[i][1] > max_stair)
+                max_stair = testCase[i][1];
         }
     }
+
+    //cout << "Max # of iPhone: "; cout.width(8); cout << max_iphone << endl;
+    //cout << "Max # of stair:  "; cout.width(8); cout << max_stair << endl;
 
     cin >> num_iphone >> num_stair;
 
@@ -108,6 +114,7 @@ int main(int argc, char** argv)
     //cout << "\033[1;33m" << "Exec time: " << "\033[1;31m" << static_cast<double>(end - start) << "\033[0m\n";
 
     // Allocate memory for recording least drop times
+
     long long int** m = new long long int* [num_iphone + 1];
     int** r = new int* [num_iphone + 1];
     for (long long int i(0); i <= num_iphone; ++i)
@@ -118,20 +125,29 @@ int main(int argc, char** argv)
 
     //print2DMatrix(m, num_iphone + 1, num_stair + 1);
 
-  int execTime(0);
-  timespec time_begin, time_end;
-  clock_gettime(CLOCK_REALTIME, &time_begin);
+  //int execTime(0);
+  //timespec time_begin, time_end;
+  //clock_gettime(CLOCK_REALTIME, &time_begin);
     buildIphoneDropTable(m, num_iphone, num_stair);
-  clock_gettime(CLOCK_REALTIME, &time_end);
-  execTime = timespec_diff_us(time_begin, time_end);
-    cout << "My answer:\t" << m[num_iphone][num_stair] << endl;
-  cout << "\033[1;33mExecution time: \033[1;31m" <<  execTime << "\033[1;33m us" << "\033[0m\n" << endl;
+  //clock_gettime(CLOCK_REALTIME, &time_end);
+  //execTime = timespec_diff_us(time_begin, time_end);
+  cout << "My answer:\t" << m[num_iphone][num_stair] << endl;
+  //cout << "\033[1;33mExecution time: \033[1;31m" <<  execTime << "\033[1;33m us" << "\033[0m\n" << endl;
   //print2DMatrix(m, num_iphone + 1, num_stair + 1);
 
-/*
-    if pow(static_cast<long long int>(2), testCase[i][0]) > testCase[i][1])
+
+    //if log2(testCase[i][1]) > testCase[i][0])
+/*    if (static_cast<long long int>(log2(num_stair)) < num_iphone)
     {
-        ???
+        int droptimes;
+        droptimes = static_cast<long long int>(log2(num_stair)) + 1;
+        cout << droptimes << endl;
+        for (int i(droptimes - 1); i >= 0; --i)
+        {
+            printf( "%lld ", static_cast<long long int>(pow(2, droptimes)) - static_cast<long long int>(pow(2, i)) );
+            //cout << pow(2, droptimes) - static_cast<long long int>(pow(2, i)) << " ";
+        }
+        cout << endl;
     }
 */
 
@@ -200,7 +216,7 @@ void print2DMatrix(T1 ** arr, T2 idx1, T2 idx2)
     {
         for (T2 j(0); j < idx2; ++j)
         {
-            std::cout.width(3);
+            cout.width(3);
             cout << arr[i][j];
         }
         cout << endl;
