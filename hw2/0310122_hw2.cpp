@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <cstdlib> // atoi
 
 using namespace std;
 
@@ -60,25 +61,75 @@ void findBestStep(long long int maxFloor[][MAX_DROP + 1], long long int eggs, in
     outFile << "\n";
 }
 
+int Recur_findLeastDrop(int eggs, long long floors, ofstream & outFile)
+{
+    long long answer(0);
+    double aux(1.0);
+    int drop(0);
+    while (answer < floors)
+    {
+        aux = 1.0;
+        answer = 0;
+        ++drop;
+        for (long int i(1); i <= eggs; ++i)
+        {
+            aux *= static_cast<double>(drop) + 1.0 - static_cast<double>(i);
+            aux /= static_cast<double>(i);
+            answer += aux;
+        }
+    }
+
+    if (drop < 63)
+    {
+        outFile << drop << "\n";
+        return drop;
+    }
+    else
+    {
+        outFile << "More then 63 times needed\n";
+        return 0;
+    }
+}
+
+long long int Recur_findFloor(int eggs, int drops)
+{
+    if (drops == 1)
+    {
+        return static_cast<long long int>(1);
+    }
+    else if (eggs == 1)
+    {
+        return static_cast<long long int>(drops);
+    }
+    else
+    {
+        return Recur_findFloor(eggs - 1, drops - 1) + Recur_findFloor(eggs, drops - 1) + 1;
+    }
+}
+
+void Recur_findBestStep(int eggs, int leastDrop, ofstream & outFile)
+{
+    long long sum(0);
+    --eggs;
+
+    while(--leastDrop > 0)
+    {
+        sum += Recur_findFloor(eggs, leastDrop) + 1;
+        outFile << sum << " ";
+    }
+    outFile << sum + 1 << "\n";
+}
+
 int main(int argc, char** argv)
 {
     timespec time_begin, time_end; int ExecTime; clock_gettime(CLOCK_REALTIME, &time_begin);
 
     long long int testCase[MAX_CASE][2];
     long long int maxFloor[MAX_PHONE + 1][MAX_DROP + 1];
-    int LAST_CASE(0);
-    int MAX_PHONE_IN_INPUT(0);
-    int leastDrop(0);
-
-    ifstream inFile(argv[2]);
-    ofstream outFile(argv[3]);
-    if (!inFile.is_open())
-    {
-        cout << "Can't find inputfile!" << endl;
-        return -1;
-    }
 
     // scan testCase
+    int LAST_CASE(0), MAX_PHONE_IN_INPUT(0);
+    ifstream inFile(argv[2]);
     for (int i(0); i < MAX_CASE; ++i)
     {
         inFile >> testCase[i][0] >> testCase[i][1];
@@ -93,10 +144,13 @@ int main(int argc, char** argv)
             MAX_PHONE_IN_INPUT = testCase[i][0];
         }
     }
+    inFile.close();
 
-    { // DP solution
-        // build the bottom-up table
-        buildMaxFloor(maxFloor, MAX_PHONE_IN_INPUT);
+    int leastDrop(0);
+    ofstream outFile(argv[3]);
+    if (argv[1] == static_cast<string>("0")) //DP solution
+    {
+        buildMaxFloor(maxFloor, MAX_PHONE_IN_INPUT); // build the bottom-up table
         for (int i(0); i < LAST_CASE; ++i)
         {
             leastDrop = findLeastDrop(maxFloor, testCase[i][0], testCase[i][1], outFile);
@@ -106,13 +160,17 @@ int main(int argc, char** argv)
             }
         }
     }
-
-    if (atoi(argv[1]) == 1)
-    { // Recursive solution
+    else // Recursive solution
+    {
+        for (int i(0); i < LAST_CASE; ++i)
+        {
+            leastDrop = Recur_findLeastDrop(testCase[i][0], testCase[i][1], outFile);
+            if (leastDrop != 0)
+            {
+                Recur_findBestStep(testCase[i][0], leastDrop, outFile);
+            }
+        }
     }
-
-    // close file stream
-    inFile.close();
     outFile.close();
 
     clock_gettime(CLOCK_REALTIME, &time_end); ExecTime = timespec_diff_us(time_begin, time_end); cout << "\nExecTime = " <<  ExecTime << "us" << endl;
