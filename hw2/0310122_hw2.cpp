@@ -17,17 +17,17 @@ int timespec_diff_us(timespec& t1, timespec& t2)
 void buildMaxFloor(long long int maxFloor[][MAX_DROP + 1], int MAX_PHONE_IN_INPUT)
 {
     // terminal condition
-    for (int i(0); i <= MAX_PHONE_IN_INPUT; ++i)
+    for (int i(1); i <= MAX_PHONE; ++i)
     {
         maxFloor[i][1] = 1;
     }
-    for (int i(0); i <= MAX_DROP; ++i)
+    for (int i(1); i <= MAX_DROP; ++i)
     {
         maxFloor[1][i] = i;
     }
 
     // build maxFloor table
-    for (int i(2); i <= MAX_PHONE_IN_INPUT; ++i)
+    for (int i(2); i <= MAX_PHONE; ++i)
     {
         for (int j(2); j <= MAX_DROP; ++j)
         {
@@ -122,10 +122,10 @@ void Recur_findBestStep(int eggs, int leastDrop, ofstream & outFile)
 
 int main(int argc, char** argv)
 {
-    timespec time_begin, time_end; int ExecTime; clock_gettime(CLOCK_REALTIME, &time_begin);
+    //timespec time_begin, time_end; int ExecTime; clock_gettime(CLOCK_REALTIME, &time_begin);
 
     long long int testCase[MAX_CASE][2];
-    long long int maxFloor[MAX_PHONE + 1][MAX_DROP + 1];
+    long long int maxFloor[MAX_PHONE + 1][MAX_DROP + 1] = {0};
 
     // scan testCase
     int LAST_CASE(0), MAX_PHONE_IN_INPUT(0);
@@ -158,7 +158,16 @@ int main(int argc, char** argv)
             {
                 findBestStep(maxFloor, testCase[i][0], leastDrop, outFile);
             }
-        }
+        }/*
+        ofstream outArray("outarray1");
+        for (int i = 0; i <= 100; ++i)
+        {
+            for (int j = 0; j <= 63; ++j)
+            {
+                outArray << maxFloor[i][j] << " ";
+            }
+            outArray << endl;
+        }*/
     }
     else // Recursive solution
     {
@@ -173,6 +182,6 @@ int main(int argc, char** argv)
     }
     outFile.close();
 
-    clock_gettime(CLOCK_REALTIME, &time_end); ExecTime = timespec_diff_us(time_begin, time_end); cout << "\nExecTime = " <<  ExecTime << "us" << endl;
+    //clock_gettime(CLOCK_REALTIME, &time_end); ExecTime = timespec_diff_us(time_begin, time_end); cout << "\nExecTime = " <<  ExecTime << "us" << endl;
     return 0;
 }
