@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <iomanip>
 
 using namespace std;
 
@@ -59,6 +60,8 @@ void printTable(T** table)
 
 int indexToCcc(int i, int j)
 {
+    return i * width + j + 1;
+    /*
     if (i == 0 || j == width - 1)
     {
         return 0;
@@ -69,6 +72,7 @@ int indexToCcc(int i, int j)
         idx = (i - 1) * (width - 1) + j + 1;
         return idx;
     }
+    */
 }
 
 int leastUnfixed(bool** table)
@@ -109,6 +113,7 @@ void doPrint()
 {
     int i(0), j(0);
     int tmp_int = leastUnfixed(fixed_table); // the target
+    //cout << "\nThe target is: " << tmp_int + 1<< endl;
     char target_color = target_table[tmp_int / width][tmp_int % width];
     //cout << target_color << " ";
     answer.push_back(static_cast<int>(target_color - '0'));
@@ -117,14 +122,14 @@ void doPrint()
     {
         if (j == width - 1 && i == height - 1) // at the down-right point
         {
-            //cout << "break";
+            answer.push_back(indexToCcc(i, j));
             break;
         }
-
-        if (j == width - 1 || i == 0) // no need to care about color
+        else if (j == width - 1 || i == 0) // on the edge
         {
+            answer.push_back(indexToCcc(i, j));
             ++i;
-            continue;
+            //continue;
         }
         else
         {
@@ -136,7 +141,6 @@ void doPrint()
             else // color can be chaged
             {
                 answer_table[i][j] = target_color;
-                //cout << indexToCcc(i, j) << " ";
                 answer.push_back(indexToCcc(i, j));
                 ++i;
                 if (i == height && j < width - 1)
@@ -152,47 +156,34 @@ void doPrint()
 
     //int heightest(1);
 
-    for (int i(0); i < 1; ++i)
+    // First column
+    for (int j(height - 1); j > 0; --j)
     {
-        for (int j(height - 1); j > 0; --j)
+        if(answer_table[j][0] == target_table[j][0]) // same color
         {
-            if(answer_table[j][i] == target_table[j][i]) // same color
-            {
-                fixed_table[j][i] = true;
-            }
-            else if (j == height - 1) // wrong color & got the end
-            {
-                i = width;
-                break;
-            }
-            else
-            {
-                //if (heightest < j)
-                //    heightest = j;
-                //cout << "hei " << heightest << endl;
-                break;
-            }
+            fixed_table[j][0] = true;
+        }
+        else
+        {
+            break;
         }
     }
 
+    // Other columns
     for (int i(1); i < width - 1; ++i)
     {
         for (int j(height - 1); j > 0; --j)
         {
-            if(answer_table[j][i] == target_table[j][i] && fixed_table[j][i - 1] == true) // same color
+            if(answer_table[j][i] == target_table[j][i] && fixed_table[j][i - 1] == true) // same color and the left one is true
             {
                 fixed_table[j][i] = true;
             }
-            else if (j == height - 1) // wrong color & got the end
-            {
-                i = width;
-                break;
-            }
             else
             {
-                //if (heightest < j)
-                //    heightest = j;
-                //cout << "hei " << heightest << endl;
+                if (j == (height - 1))
+                {
+                    i = width;
+                }
                 break;
             }
         }
@@ -244,7 +235,7 @@ int main(int argc, char** argv)
     }
 */
     // Display cell_table
-    /*
+/*
     {
         cout << "\n\nColor Table: (Target)" << endl;
         printTable(target_table);
@@ -255,9 +246,18 @@ int main(int argc, char** argv)
         cout << "\nFixed Table: (Answer)" << endl;
         printTable(fixed_table);
 
+        cout << "\nIndex Table:" << endl;
+        for (int i(0); i < height; ++i)
+        {
+            for (int j(0); j < width; ++j)
+            {
+                cout << indexToCcc(i, j) << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
     }
-    */
-
+*/
     ofstream outFile(argv[2]);
 
     outFile << answer_lists.size() << endl;
@@ -265,6 +265,7 @@ int main(int argc, char** argv)
     {
         for (int j(0); static_cast<unsigned int>(j) < answer_lists.at(i).size(); ++j)
         {
+            //outFile << setw(3);
             outFile << answer_lists.at(i).at(j) << " ";
         }
         outFile << endl;
