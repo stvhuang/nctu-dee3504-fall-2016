@@ -2,8 +2,8 @@ CXX=g++
 CXXFLAGS=-Werror -Wall
 SRC=0310122_fp.cpp
 EXE=0310122_fp.exe
-INPUT=map.txt
-OUTPUT=sol.txt
+INPUT=inputfile
+OUTPUT=outputfile
 
 all: $(SRC)
 	$(CXX) $< -o $(EXE) $(CXXFLAGS)
@@ -15,4 +15,3 @@ run: $(EXE)
 
 clean:
 	rm -rf $(OBJ) $(EXE)
-
