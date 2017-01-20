@@ -41,38 +41,9 @@ void initialization(char* inuptfile)
     inFile.close();
 }
 
-template <class T> // DONE
-void printTable(T** table)
-{
-    cout << endl;
-    for (int i(0); i < height; ++i)
-    {
-        for (int j(0); j < width; ++j)
-        {
-            cout.width(2);
-            cout << table[i][j];
-        }
-        cout << endl;
-    }
-    cout << endl;
-    return;
-}
-
 int indexToCcc(int i, int j)
 {
     return i * width + j + 1;
-    /*
-    if (i == 0 || j == width - 1)
-    {
-        return 0;
-    }
-    else
-    {
-        int idx(0);
-        idx = (i - 1) * (width - 1) + j + 1;
-        return idx;
-    }
-    */
 }
 
 int leastUnfixed(bool** table)
@@ -87,7 +58,6 @@ int leastUnfixed(bool** table)
             }
             else
             {
-                //cout << "Height: " << j << "\tWidth: " << i << endl;
                 return j * width + i;
             }
         }
@@ -100,7 +70,8 @@ bool checkIfDone(bool** fixed_table)
     for (int i(1); i < height; ++i)
     {
         for (int j(0); j < width - 1; ++j)
-        {if (fixed_table[i][j] == false)
+        {
+            if (fixed_table[i][j] == false)
             {
                 return false;
             }
@@ -113,9 +84,7 @@ void doPrint()
 {
     int i(0), j(0);
     int tmp_int = leastUnfixed(fixed_table); // the target
-    //cout << "\nThe target is: " << tmp_int + 1<< endl;
     char target_color = target_table[tmp_int / width][tmp_int % width];
-    //cout << target_color << " ";
     answer.push_back(static_cast<int>(target_color - '0'));
 
     while(i < height && j < width) // painting
@@ -129,7 +98,6 @@ void doPrint()
         {
             answer.push_back(indexToCcc(i, j));
             ++i;
-            //continue;
         }
         else
         {
@@ -151,10 +119,6 @@ void doPrint()
             }
         }
     }
-
-    //cout << endl;
-
-    //int heightest(1);
 
     // First column
     for (int j(height - 1); j > 0; --j)
@@ -214,50 +178,8 @@ int main(int argc, char** argv)
         answer.clear();
         doPrint();
         answer_lists.push_back(answer);
-        /*
-        cout << "\nColor Table: (Answer)" << endl;
-        printTable(answer_table);
-        cout << "\nFixed Table: (Answer)" << endl;
-        printTable(fixed_table);
-        */
     }
 
-/*
-    cout << "Answer is: " << endl;
-    cout << answer_lists.size() << endl;
-    for (int i(0); static_cast<unsigned int>(i) < answer_lists.size(); ++i)
-    {
-        for (int j(0); static_cast<unsigned int>(j) < answer_lists.at(i).size(); ++j)
-        {
-            cout << answer_lists.at(i).at(j) << " ";
-        }
-        cout << endl;
-    }
-*/
-    // Display cell_table
-/*
-    {
-        cout << "\n\nColor Table: (Target)" << endl;
-        printTable(target_table);
-
-        cout << "\nColor Table: (Answer)" << endl;
-        printTable(answer_table);
-
-        cout << "\nFixed Table: (Answer)" << endl;
-        printTable(fixed_table);
-
-        cout << "\nIndex Table:" << endl;
-        for (int i(0); i < height; ++i)
-        {
-            for (int j(0); j < width; ++j)
-            {
-                cout << indexToCcc(i, j) << " ";
-            }
-            cout << endl;
-        }
-        cout << endl;
-    }
-*/
     ofstream outFile(argv[2]);
 
     outFile << answer_lists.size() << endl;
