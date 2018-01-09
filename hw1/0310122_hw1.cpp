@@ -6,23 +6,22 @@
 
 //#include <iostream>
 //#include <ctime>
-#include <string>
 #include <fstream>
+#include <string>
 #include <vector>
 
 using namespace std;
 
-void insertionSort(vector<int>& arr, int low, int high);
-void merge(vector<int>& arr, int low, int pivot, int high);
-void mergeSort(vector<int>& arr, int low, int high);
-void heapify(vector<int>& arr, int n, int i);
-void heapSort(vector<int>& arr, int n);
-void quickSort(vector<int>& arr, int low, int high);
+void insertionSort(vector<int> &arr, int low, int high);
+void merge(vector<int> &arr, int low, int pivot, int high);
+void mergeSort(vector<int> &arr, int low, int high);
+void heapify(vector<int> &arr, int n, int i);
+void heapSort(vector<int> &arr, int n);
+void quickSort(vector<int> &arr, int low, int high);
 
-int main (int __attribute__((unused)) argc, char ** argv) {
-
+int main(int __attribute__((unused)) argc, char **argv) {
     // Execution time test: start
-    //clock_t start(clock());
+    // clock_t start(clock());
 
     // declare file I/O stream
     ifstream inFile(argv[2]);
@@ -47,13 +46,13 @@ int main (int __attribute__((unused)) argc, char ** argv) {
 
     srand(time(NULL));
 
-    if (argv[1] == static_cast<string>("1")) {        // insertion sort
+    if (argv[1] == static_cast<string>("1")) {  // insertion sort
         insertionSort(arr, 0, arr_size - 1);
-    } else if (argv[1] == static_cast<string>("2")) { // merge sort
+    } else if (argv[1] == static_cast<string>("2")) {  // merge sort
         mergeSort(arr, 0, arr_size - 1);
-    } else if (argv[1] == static_cast<string>("3")) { // heap sort
+    } else if (argv[1] == static_cast<string>("3")) {  // heap sort
         heapSort(arr, arr_size);
-    } else if (argv[1] == static_cast<string>("4")) { // quick sort
+    } else if (argv[1] == static_cast<string>("4")) {  // quick sort
         quickSort(arr, 0, arr_size - 1);
     }
 
@@ -68,18 +67,19 @@ int main (int __attribute__((unused)) argc, char ** argv) {
     outFile.close();
 
     // Execution time test: end
-    //clock_t end(clock()); cout << "\033[1;33m" << argv[1] << " Exec time: " << "\033[1;31m" << static_cast<double>(end - start) << "\033[0m\n";
+    // clock_t end(clock()); cout << "\033[1;33m" << argv[1] << " Exec time: "
+    // << "\033[1;31m" << static_cast<double>(end - start) << "\033[0m\n";
 
     return 0;
 }
 
-void insertionSort(vector<int>& arr, int low, int high) {
+void insertionSort(vector<int> &arr, int low, int high) {
     int temp(0);
     int length(high + 1), i(low), j(0);
     for (j = 1; j < length; ++j) {
         temp = arr[j];
         i = j - 1;
-        while(arr[i] > temp && i >= 0) {
+        while (arr[i] > temp && i >= 0) {
             arr[i + 1] = arr[i];
             --i;
         }
@@ -89,7 +89,7 @@ void insertionSort(vector<int>& arr, int low, int high) {
     return;
 }
 
-void merge(vector<int>& arr, int low, int pivot, int high) {
+void merge(vector<int> &arr, int low, int pivot, int high) {
     int n_1(pivot - low + 1), n_2(high - pivot);
     int L[n_1 + 1], R[n_2 + 1];
 
@@ -129,24 +129,25 @@ void merge(vector<int>& arr, int low, int pivot, int high) {
     return;
 }
 
-void mergeSort(vector<int>& arr, int low, int high) {
+void mergeSort(vector<int> &arr, int low, int high) {
     if (high > low) {
         // divide
-        int pivot((low + high) / 2); // choose pivot
+        int pivot((low + high) / 2);  // choose pivot
 
         // conquer
-        mergeSort(arr, low, pivot); // do merge sort on left hand side array
-        mergeSort(arr, pivot + 1, high); // do merge sort on right hand side array
+        mergeSort(arr, low, pivot);  // do merge sort on left hand side array
+        mergeSort(arr, pivot + 1,
+                  high);  // do merge sort on right hand side array
 
         // combine
-        merge(arr, low, pivot, high); // combine two sorted arrays
+        merge(arr, low, pivot, high);  // combine two sorted arrays
     }
 
     return;
 }
 
-void heapify(vector<int>& arr, int n, int i) {
-    int largest(i);  // Initialize largest as root
+void heapify(vector<int> &arr, int n, int i) {
+    int largest(i);    // Initialize largest as root
     int l(2 * i + 1);  // left = 2 * i + 1
     int r(2 * i + 2);  // right = 2 * i + 2
 
@@ -170,22 +171,22 @@ void heapify(vector<int>& arr, int n, int i) {
     return;
 }
 
-void heapSort(vector<int>& arr, int n) {
-    for (int i(n / 2 - 1); i >= 0; --i) { // Build heap
+void heapSort(vector<int> &arr, int n) {
+    for (int i(n / 2 - 1); i >= 0; --i) {  // Build heap
         heapify(arr, n, i);
     }
 
-    for (int i(n - 1); i >= 0; --i) { // extract element from heap
-        swap(arr[0], arr[i]); // move root to end
-        heapify(arr, i, 0); // heapify the reduced heap
+    for (int i(n - 1); i >= 0; --i) {  // extract element from heap
+        swap(arr[0], arr[i]);          // move root to end
+        heapify(arr, i, 0);            // heapify the reduced heap
     }
 
     return;
 }
 
-void quickSort(vector<int>& arr, int low, int high) {
+void quickSort(vector<int> &arr, int low, int high) {
     // always choose the last element in arr as pivot
-    //int i(low), j(high), pivot(arr[(low + high) / 2]);
+    // int i(low), j(high), pivot(arr[(low + high) / 2]);
 
     // randomly choose the pivot if the size of arr > 50
     if ((high - low) > 50) {
